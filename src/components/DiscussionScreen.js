@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import Voice from '@react-native-voice/voice';
+import { styles } from '../styles/styles';
 
 const DiscussionScreen = ({ route }) => {
   const { numberOfParticipants } = route.params;
@@ -15,7 +16,6 @@ const DiscussionScreen = ({ route }) => {
     setUsers(tempUsers);
 
     Voice.onSpeechResults = onSpeechResults;
-
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -61,32 +61,15 @@ const DiscussionScreen = ({ route }) => {
       {users.map((user, index) => (
         <Text key={index} style={styles.user}>{user}</Text>
       ))}
-      <Button title="音声認識開始" onPress={startRecognizing} />
+      <TouchableOpacity style={styles.button} onPress={startRecognizing}>
+        <Text style={styles.buttonText}>音声認識開始</Text>
+      </TouchableOpacity>
       <Text style={styles.transcript}>{transcript}</Text>
-      <Button title="終了" onPress={handleFinishDiscussion} />
+      <TouchableOpacity style={styles.button} onPress={handleFinishDiscussion}>
+        <Text style={styles.buttonText}>終了</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  user: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  transcript: {
-    marginTop: 20,
-    fontSize: 16,
-    color: 'blue',
-  },
-});
 
 export default DiscussionScreen;

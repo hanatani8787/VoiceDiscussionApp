@@ -16,16 +16,4 @@ const stopRecognizing = async () => {
   }
 };
 
-const destroyRecognizer = async () => {
-  try {
-    await Voice.destroy();
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-export default {
-  startRecognizing,
-  stopRecognizing,
-  destroyRecognizer,
-};
+export { startRecognizing, stopRecognizing };

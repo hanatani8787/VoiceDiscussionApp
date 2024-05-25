@@ -1,22 +1,22 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { styles } from '../styles/styles';
 
 const MenuScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Button title="閲覧" onPress={() => {}} />
-      <Button title="投稿" onPress={() => navigation.navigate('PostScreen')} />
-      <Button title="履歴" onPress={() => {}} />
+      <Text style={styles.title}>メニュー</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Post')}>
+        <Text style={styles.buttonText}>投稿</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>閲覧</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>履歴</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default MenuScreen;
