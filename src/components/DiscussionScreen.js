@@ -7,6 +7,7 @@ const DiscussionScreen = ({ route }) => {
   const { numberOfParticipants } = route.params;
   const [users, setUsers] = useState([]);
   const [transcript, setTranscript] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const tempUsers = [];
@@ -16,6 +17,8 @@ const DiscussionScreen = ({ route }) => {
     setUsers(tempUsers);
 
     Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechError = onSpeechError;
+
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -25,7 +28,13 @@ const DiscussionScreen = ({ route }) => {
     setTranscript(e.value[0]);
   };
 
+  const onSpeechError = (e) => {
+    setError(JSON.stringify(e.error));
+  };
+
   const startRecognizing = async () => {
+    setError('');
+    setTranscript('');
     try {
       await Voice.start('ja-JP');
     } catch (e) {
@@ -65,6 +74,7 @@ const DiscussionScreen = ({ route }) => {
         <Text style={styles.buttonText}>音声認識開始</Text>
       </TouchableOpacity>
       <Text style={styles.transcript}>{transcript}</Text>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
       <TouchableOpacity style={styles.button} onPress={handleFinishDiscussion}>
         <Text style={styles.buttonText}>終了</Text>
       </TouchableOpacity>

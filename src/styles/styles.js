@@ -45,4 +45,9 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     color: '#555',
   },
+  error: {
+    fontSize: 16,
+    color: 'red',
+    marginTop: 10,
+  },
 });
