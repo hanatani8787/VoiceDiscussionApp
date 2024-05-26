@@ -33,12 +33,16 @@ const DiscussionScreen = ({ route }) => {
   };
 
   const startRecognizing = async () => {
+    console.log('Start recognizing called');
     setError('');
     setTranscript('');
     try {
+      console.log('Trying to start voice recognition');
       await Voice.start('ja-JP');
+      console.log('Voice recognition started');
     } catch (e) {
-      console.error(e);
+      console.error('Error in startRecognizing:', e);
+      setError(e.message);
     }
   };
 
