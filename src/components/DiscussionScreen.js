@@ -49,9 +49,9 @@ const DiscussionScreen = ({ route }) => {
   const handleFinishDiscussion = async () => {
     const title = 'ディスカッションの結果';
     const content = transcript;
-
+  
     try {
-      const response = await fetch('http://localhost:3000/posts', {
+      const response = await fetch('http://192.168.0.2:3000/posts', { // <ローカルIP>を適切な値に置き換えます
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,12 +61,13 @@ const DiscussionScreen = ({ route }) => {
       if (response.ok) {
         console.log('投稿が完了しました');
       } else {
-        console.error('投稿に失敗しました');
+        console.error('投稿に失敗しました:', response.status, response.statusText);
       }
     } catch (e) {
-      console.error(e);
+      console.error('ネットワークリクエストに失敗しました:', e);
     }
   };
+  
 
   return (
     <View style={styles.container}>
