@@ -5,6 +5,7 @@ import { styles } from '../styles/styles';
 import { startRecognizing, stopRecognizing } from '../utils/speechRecognition';
 
 const MAX_USERS = 4; // 最大ユーザー数を定義
+const MIN_USERS = 2; // 最小ユーザー数を定義
 
 const userColors = {
   'ユーザーA': styles.userA,
@@ -21,8 +22,8 @@ const DiscussionScreen = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    if (numberOfParticipants > MAX_USERS) {
-      Alert.alert(`ユーザー数は最大${MAX_USERS}人までです。`);
+    if (numberOfParticipants > MAX_USERS || numberOfParticipants < MIN_USERS) {
+      Alert.alert(`ユーザー数は${MIN_USERS}人から${MAX_USERS}人までです。`);
       return;
     }
 
