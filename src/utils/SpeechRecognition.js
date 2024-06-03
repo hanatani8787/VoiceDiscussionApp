@@ -8,7 +8,7 @@ const initVoiceRecognition = () => {
       onSpeechResults(e);
     }
   };
-  
+
   Voice.onSpeechError = (e) => {
     console.error('onSpeechError:', e);
     if (typeof onSpeechError === 'function') {

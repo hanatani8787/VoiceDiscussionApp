@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import { styles } from '../styles/styles';
 import { startRecognizing, stopRecognizing } from '../utils/speechRecognition';
@@ -7,13 +7,13 @@ import { startRecognizing, stopRecognizing } from '../utils/speechRecognition';
 const DiscussionScreen = ({ route }) => {
   const { numberOfParticipants } = route.params;
   const [users, setUsers] = useState([]);
-  const [transcripts, setTranscripts] = useState([]);
+  const [transcripts, setTranscripts] = useState({});
   const [error, setError] = useState('');
 
   useEffect(() => {
     const tempUsers = [];
     for (let i = 0; i < parseInt(numberOfParticipants, 10); i++) {
-      tempUsers.push(`ユーザー${String.fromCharCode(97 + i)}`);
+      tempUsers.push(`ユーザー${String.fromCharCode(65 + i)}`); // 65 is the ASCII code for 'A'
     }
     setUsers(tempUsers);
 
@@ -26,33 +26,36 @@ const DiscussionScreen = ({ route }) => {
   }, [numberOfParticipants]);
 
   const onSpeechResults = (e) => {
-    console.log('Speech results:', e.value[0]);
-    const newTranscript = { user: `ユーザー${String.fromCharCode(97 + transcripts.length % numberOfParticipants)}`, text: e.value[0] };
-    setTranscripts([...transcripts, newTranscript]);
+    const recognizedText = e.value[0];
+    const userIndex = Math.floor(Math.random() * numberOfParticipants);
+    const user = `ユーザー${String.fromCharCode(65 + userIndex)}`;
+
+    setTranscripts((prevTranscripts) => {
+      const updatedTranscripts = { ...prevTranscripts };
+      if (!updatedTranscripts[user]) {
+        updatedTranscripts[user] = [];
+      }
+      updatedTranscripts[user].push(recognizedText);
+      return updatedTranscripts;
+    });
   };
 
   const onSpeechError = (e) => {
-    console.error('Speech error:', e.error);
     setError(JSON.stringify(e.error));
   };
 
   const handleStartRecognizing = async () => {
-    console.log('Start recognizing called');
     setError('');
-    setTranscripts([]);
     try {
-      console.log('Trying to start voice recognition');
       await startRecognizing();
-      console.log('Voice recognition started');
     } catch (e) {
-      console.error('Error in startRecognizing:', e);
       setError(e.message);
     }
   };
 
   const handleFinishDiscussion = async () => {
     const title = 'ディスカッションの結果';
-    const content = transcripts.map(transcript => `${transcript.user}: ${transcript.text}`).join('\n');
+    const content = Object.entries(transcripts).map(([user, texts]) => `${user}: ${texts.join('\n')}`).join('\n\n');
 
     try {
       const response = await fetch('http://192.168.0.2:3000/posts', {
@@ -75,16 +78,18 @@ const DiscussionScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>ディスカッション</Text>
-      {users.map((user, index) => (
-        <Text key={index} style={styles.user}>{user}</Text>
-      ))}
+      <ScrollView>
+        {users.map((user) => (
+          <View key={user} style={styles.userContainer}>
+            <Text style={styles.user}>{user}</Text>
+            <Text style={styles.transcript}>{(transcripts[user] || []).join('\n')}</Text>
+          </View>
+        ))}
+      </ScrollView>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
       <TouchableOpacity style={styles.button} onPress={handleStartRecognizing}>
         <Text style={styles.buttonText}>音声認識開始</Text>
       </TouchableOpacity>
-      {transcripts.map((transcript, index) => (
-        <Text key={index} style={styles.transcript}>{transcript.user}: {transcript.text}</Text>
-      ))}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
       <TouchableOpacity style={styles.button} onPress={handleFinishDiscussion}>
         <Text style={styles.buttonText}>終了</Text>
       </TouchableOpacity>
