@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import { styles } from '../styles/styles';
 import { startRecognizing, stopRecognizing } from '../utils/speechRecognition';
+
+const userColors = {
+  'ユーザーA': styles.userA,
+  'ユーザーB': styles.userB,
+  'ユーザーC': styles.userC,
+};
 
 const DiscussionScreen = ({ route }) => {
   const { numberOfParticipants } = route.params;
   const [users, setUsers] = useState([]);
   const [transcripts, setTranscripts] = useState([]);
   const [error, setError] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const tempUsers = [];
@@ -51,10 +58,10 @@ const DiscussionScreen = ({ route }) => {
 
   const handleFinishDiscussion = async () => {
     const title = 'ディスカッションの結果';
-    const content = transcripts.map(t => `${t.user} >> ${t.text}`).join('\n');
+    const content = transcripts.map(t => `${t.text}`).join('\n');
 
     try {
-      const response = await fetch('http://192.168.0.2:3000/posts', {
+      const response = await fetch('http://あなたのローカルIPアドレス:3000/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,16 +81,41 @@ const DiscussionScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>ディスカッション</Text>
-      <ScrollView>
+      <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+        <Text style={styles.buttonText}>ユーザー情報を表示</Text>
+      </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalView}>
+            <Text style={modalStyles.modalTitle}>ユーザー情報</Text>
+            {users.map((user, index) => (
+              <View key={index} style={[modalStyles.userBox, userColors[user]]}>
+                <Text style={modalStyles.userText}>{user}</Text>
+              </View>
+            ))}
+            <TouchableOpacity
+              style={modalStyles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={modalStyles.buttonText}>閉じる</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <ScrollView style={styles.chatContainer}>
         {transcripts.map((transcript, index) => (
-          <View
-            key={index}
-            style={[
-              styles.transcriptContainer,
-              transcript.user === 'ユーザーA' ? styles.transcriptLeft : styles.transcriptRight,
-            ]}
-          >
-            <Text style={styles.transcriptText}>{transcript.user} >> {transcript.text}</Text>
+          <View key={index} style={styles.chatRow}>
+            <View style={[styles.icon, userColors[transcript.user]]}>
+              <Text style={styles.iconText}>{transcript.user.charAt(3)}</Text>
+            </View>
+            <View style={[styles.bubble, userColors[transcript.user]]}>
+              <Text style={styles.transcriptText}>{transcript.text}</Text>
+            </View>
           </View>
         ))}
       </ScrollView>
@@ -97,5 +129,54 @@ const DiscussionScreen = ({ route }) => {
     </View>
   );
 };
+
+const modalStyles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  userBox: {
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  userText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+});
 
 export default DiscussionScreen;

@@ -12,27 +12,32 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
   },
-  userContainer: {
-    marginVertical: 10,
+  chatContainer: {
+    flex: 1,
   },
-  user: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  transcriptContainer: {
+  chatRow: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     marginVertical: 5,
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  iconText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  bubble: {
     padding: 10,
     borderRadius: 10,
-    maxWidth: '80%',
-  },
-  transcriptLeft: {
+    maxWidth: '70%',
     backgroundColor: '#e1ffc7',
-    alignSelf: 'flex-start',
-  },
-  transcriptRight: {
-    backgroundColor: '#d1eaff',
-    alignSelf: 'flex-end',
   },
   transcriptText: {
     fontSize: 16,
@@ -51,5 +56,14 @@ export const styles = StyleSheet.create({
   error: {
     color: 'red',
     marginVertical: 10,
+  },
+  userA: {
+    backgroundColor: '#e1ffc7',
+  },
+  userB: {
+    backgroundColor: '#d1eaff',
+  },
+  userC: {
+    backgroundColor: '#ffe1e1',
   },
 });
