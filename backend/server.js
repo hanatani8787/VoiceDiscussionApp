@@ -1,14 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
+const cors = require('cors');  // 追加: CORS対応
+
 const app = express();
 const port = 3000;
 
-// CORS設定
-app.use(cors());
-
 // JSONリクエストボディのパース設定
 app.use(bodyParser.json());
+app.use(cors());  // 追加: CORS対応
 
 // POSTリクエストを処理するエンドポイント
 app.post('/posts', (req, res) => {

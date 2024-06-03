@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import { styles } from '../styles/styles';
+import { startRecognizing, stopRecognizing } from '../utils/speechRecognition';
 
 const DiscussionScreen = ({ route }) => {
   const { numberOfParticipants } = route.params;
   const [users, setUsers] = useState([]);
-  const [transcript, setTranscript] = useState('');
+  const [transcripts, setTranscripts] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -25,20 +26,23 @@ const DiscussionScreen = ({ route }) => {
   }, [numberOfParticipants]);
 
   const onSpeechResults = (e) => {
-    setTranscript(e.value[0]);
+    console.log('Speech results:', e.value[0]);
+    const newTranscript = { user: `ユーザー${String.fromCharCode(97 + transcripts.length % numberOfParticipants)}`, text: e.value[0] };
+    setTranscripts([...transcripts, newTranscript]);
   };
 
   const onSpeechError = (e) => {
+    console.error('Speech error:', e.error);
     setError(JSON.stringify(e.error));
   };
 
-  const startRecognizing = async () => {
+  const handleStartRecognizing = async () => {
     console.log('Start recognizing called');
     setError('');
-    setTranscript('');
+    setTranscripts([]);
     try {
       console.log('Trying to start voice recognition');
-      await Voice.start('ja-JP');
+      await startRecognizing();
       console.log('Voice recognition started');
     } catch (e) {
       console.error('Error in startRecognizing:', e);
@@ -48,10 +52,10 @@ const DiscussionScreen = ({ route }) => {
 
   const handleFinishDiscussion = async () => {
     const title = 'ディスカッションの結果';
-    const content = transcript;
-  
+    const content = transcripts.map(transcript => `${transcript.user}: ${transcript.text}`).join('\n');
+
     try {
-      const response = await fetch('http://192.168.0.2:3000/posts', { // <ローカルIP>を適切な値に置き換えます
+      const response = await fetch('http://192.168.0.2:3000/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +71,6 @@ const DiscussionScreen = ({ route }) => {
       console.error('ネットワークリクエストに失敗しました:', e);
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -75,10 +78,12 @@ const DiscussionScreen = ({ route }) => {
       {users.map((user, index) => (
         <Text key={index} style={styles.user}>{user}</Text>
       ))}
-      <TouchableOpacity style={styles.button} onPress={startRecognizing}>
+      <TouchableOpacity style={styles.button} onPress={handleStartRecognizing}>
         <Text style={styles.buttonText}>音声認識開始</Text>
       </TouchableOpacity>
-      <Text style={styles.transcript}>{transcript}</Text>
+      {transcripts.map((transcript, index) => (
+        <Text key={index} style={styles.transcript}>{transcript.user}: {transcript.text}</Text>
+      ))}
       {error ? <Text style={styles.error}>{error}</Text> : null}
       <TouchableOpacity style={styles.button} onPress={handleFinishDiscussion}>
         <Text style={styles.buttonText}>終了</Text>

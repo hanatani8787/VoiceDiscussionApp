@@ -17,7 +17,7 @@ VoiceDiscussionAppは、音声認識機能を使用して議論を文字起こ�
 ### 必要な環境
 - Node.js (version 18以上)
 - Xcode (iOS開発用)
-- Yarn
+- npm
 
 ### 手順
 1. リポジトリをクローンします：
@@ -28,7 +28,7 @@ VoiceDiscussionAppは、音声認識機能を使用して議論を文字起こ�
 
 2. 依存関係をインストールします：
     ```sh
-    yarn install
+    npm install
     cd ios
     pod install
     cd ..
@@ -36,12 +36,12 @@ VoiceDiscussionAppは、音声認識機能を使用して議論を文字起こ�
 
 3. アプリを起動します：
     ```sh
-    yarn start
+    npm start
     ```
 
 4. iOSシミュレータでアプリを実行します：
     ```sh
-    yarn ios
+    npm ios
     ```
 
 ## 使用ライブラリ
