@@ -7,7 +7,7 @@ import { startRecognizing, stopRecognizing } from '../utils/speechRecognition';
 const DiscussionScreen = ({ route }) => {
   const { numberOfParticipants } = route.params;
   const [users, setUsers] = useState([]);
-  const [transcripts, setTranscripts] = useState({});
+  const [transcripts, setTranscripts] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -30,14 +30,10 @@ const DiscussionScreen = ({ route }) => {
     const userIndex = Math.floor(Math.random() * numberOfParticipants);
     const user = `ユーザー${String.fromCharCode(65 + userIndex)}`;
 
-    setTranscripts((prevTranscripts) => {
-      const updatedTranscripts = { ...prevTranscripts };
-      if (!updatedTranscripts[user]) {
-        updatedTranscripts[user] = [];
-      }
-      updatedTranscripts[user].push(recognizedText);
-      return updatedTranscripts;
-    });
+    setTranscripts((prevTranscripts) => [
+      ...prevTranscripts,
+      { user, text: recognizedText }
+    ]);
   };
 
   const onSpeechError = (e) => {
@@ -55,7 +51,7 @@ const DiscussionScreen = ({ route }) => {
 
   const handleFinishDiscussion = async () => {
     const title = 'ディスカッションの結果';
-    const content = Object.entries(transcripts).map(([user, texts]) => `${user}: ${texts.join('\n')}`).join('\n\n');
+    const content = transcripts.map(t => `${t.user} >> ${t.text}`).join('\n');
 
     try {
       const response = await fetch('http://192.168.0.2:3000/posts', {
@@ -79,10 +75,15 @@ const DiscussionScreen = ({ route }) => {
     <View style={styles.container}>
       <Text style={styles.title}>ディスカッション</Text>
       <ScrollView>
-        {users.map((user) => (
-          <View key={user} style={styles.userContainer}>
-            <Text style={styles.user}>{user}</Text>
-            <Text style={styles.transcript}>{(transcripts[user] || []).join('\n')}</Text>
+        {transcripts.map((transcript, index) => (
+          <View
+            key={index}
+            style={[
+              styles.transcriptContainer,
+              transcript.user === 'ユーザーA' ? styles.transcriptLeft : styles.transcriptRight,
+            ]}
+          >
+            <Text style={styles.transcriptText}>{transcript.user} >> {transcript.text}</Text>
           </View>
         ))}
       </ScrollView>

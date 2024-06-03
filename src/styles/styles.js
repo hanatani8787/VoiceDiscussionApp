@@ -3,8 +3,8 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0f0f0',
+    padding: 10,
   },
   title: {
     fontSize: 24,
@@ -19,9 +19,23 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  transcript: {
-    fontSize: 16,
+  transcriptContainer: {
+    flexDirection: 'row',
     marginVertical: 5,
+    padding: 10,
+    borderRadius: 10,
+    maxWidth: '80%',
+  },
+  transcriptLeft: {
+    backgroundColor: '#e1ffc7',
+    alignSelf: 'flex-start',
+  },
+  transcriptRight: {
+    backgroundColor: '#d1eaff',
+    alignSelf: 'flex-end',
+  },
+  transcriptText: {
+    fontSize: 16,
   },
   button: {
     backgroundColor: '#007BFF',
