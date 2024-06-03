@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet, Alert } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import { styles } from '../styles/styles';
 import { startRecognizing, stopRecognizing } from '../utils/speechRecognition';
+
+const MAX_USERS = 4; // 最大ユーザー数を定義
 
 const userColors = {
   'ユーザーA': styles.userA,
   'ユーザーB': styles.userB,
   'ユーザーC': styles.userC,
+  'ユーザーD': styles.userD,
 };
 
 const DiscussionScreen = ({ route }) => {
@@ -18,6 +21,11 @@ const DiscussionScreen = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
+    if (numberOfParticipants > MAX_USERS) {
+      Alert.alert(`ユーザー数は最大${MAX_USERS}人までです。`);
+      return;
+    }
+
     const tempUsers = [];
     for (let i = 0; i < parseInt(numberOfParticipants, 10); i++) {
       tempUsers.push(`ユーザー${String.fromCharCode(65 + i)}`); // 65 is the ASCII code for 'A'

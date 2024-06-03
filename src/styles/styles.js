@@ -12,6 +12,14 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
   },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+  },
   chatContainer: {
     flex: 1,
   },
@@ -65,5 +73,8 @@ export const styles = StyleSheet.create({
   },
   userC: {
     backgroundColor: '#ffe1e1',
+  },
+  userD: {
+    backgroundColor: '#e1e1ff',
   },
 });
