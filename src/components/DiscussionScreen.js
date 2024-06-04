@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet, Alert, Button } from 'react-native';
 import { styles } from '../styles/styles';
 import { initVoiceRecognition, startRecognizing, stopRecognizing } from '../utils/speechRecognition';
 import Voice from '@react-native-voice/voice';
@@ -14,12 +14,13 @@ const userColors = {
   'ユーザーD': styles.userD,
 };
 
-const DiscussionScreen = ({ route }) => {
+const DiscussionScreen = ({ route, navigation }) => {
   const { numberOfParticipants } = route.params;
   const [users, setUsers] = useState([]);
   const [transcripts, setTranscripts] = useState([]);
   const [error, setError] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  const [userInfoModalVisible, setUserInfoModalVisible] = useState(false);
+  const [startModalVisible, setStartModalVisible] = useState(true); // 音声認識開始モーダル
 
   useEffect(() => {
     if (numberOfParticipants > MAX_USERS || numberOfParticipants < MIN_USERS) {
@@ -37,6 +38,16 @@ const DiscussionScreen = ({ route }) => {
 
     Voice.onSpeechResults = handleSpeechResults;
     Voice.onSpeechError = handleSpeechError;
+
+    navigation.setOptions({
+      headerRight: () => (
+        <Button
+          onPress={handleFinishDiscussion}
+          title="終了"
+          color="#000"
+        />
+      ),
+    });
 
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
@@ -60,6 +71,7 @@ const DiscussionScreen = ({ route }) => {
 
   const handleStartRecognizing = async () => {
     setError('');
+    setStartModalVisible(false); // 音声認識開始モーダルを非表示にする
     try {
       await startRecognizing();
     } catch (e) {
@@ -72,7 +84,7 @@ const DiscussionScreen = ({ route }) => {
     const content = transcripts.map(t => `${t.text}`).join('\n');
 
     try {
-      const response = await fetch('http://あなたのローカルIPアドレス:3000/posts', {
+      const response = await fetch('http://192.168.0.2:3000/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,6 +93,7 @@ const DiscussionScreen = ({ route }) => {
       });
       if (response.ok) {
         console.log('投稿が完了しました');
+        navigation.navigate('Post'); // 終了後にPost画面に戻る
       } else {
         console.error('投稿に失敗しました:', response.status, response.statusText);
       }
@@ -92,14 +105,14 @@ const DiscussionScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>ディスカッション</Text>
-      <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={styles.button} onPress={() => setUserInfoModalVisible(true)}>
         <Text style={styles.buttonText}>ユーザー情報を表示</Text>
       </TouchableOpacity>
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        visible={userInfoModalVisible}
+        onRequestClose={() => setUserInfoModalVisible(false)}
       >
         <View style={modalStyles.modalContainer}>
           <View style={modalStyles.modalView}>
@@ -111,9 +124,27 @@ const DiscussionScreen = ({ route }) => {
             ))}
             <TouchableOpacity
               style={modalStyles.closeButton}
-              onPress={() => setModalVisible(false)}
+              onPress={() => setUserInfoModalVisible(false)}
             >
               <Text style={modalStyles.buttonText}>閉じる</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={startModalVisible}
+        onRequestClose={() => setStartModalVisible(false)}
+      >
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalView}>
+            <Text style={modalStyles.modalTitle}>音声認識開始</Text>
+            <TouchableOpacity
+              style={modalStyles.startButton}
+              onPress={handleStartRecognizing}
+            >
+              <Text style={modalStyles.buttonText}>開始</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -131,12 +162,6 @@ const DiscussionScreen = ({ route }) => {
         ))}
       </ScrollView>
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <TouchableOpacity style={styles.button} onPress={handleStartRecognizing}>
-        <Text style={styles.buttonText}>音声認識開始</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleFinishDiscussion}>
-        <Text style={styles.buttonText}>終了</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -150,7 +175,7 @@ const modalStyles = StyleSheet.create({
   },
   modalView: {
     width: '80%',
-    backgroundColor: '#ddd', // モーダル背景色を淡いグレーに
+    backgroundColor: '#ddd',
     borderRadius: 20,
     padding: 20,
     alignItems: 'center',
@@ -167,17 +192,14 @@ const modalStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#2f4f4f', // タイトルの色をダークスレートグレーに
+    color: '#2f4f4f',
   },
-  userBox: {
+  startButton: {
+    backgroundColor: '#007BFF',
     padding: 10,
     borderRadius: 5,
-    marginBottom: 10,
-  },
-  userText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2f4f4f', // ユーザー名の色をダークスレートグレーに
+    alignItems: 'center',
+    marginTop: 15,
   },
   closeButton: {
     backgroundColor: '#007BFF',
@@ -189,6 +211,16 @@ const modalStyles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+  },
+  userBox: {
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  userText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2f4f4f',
   },
 });
 
