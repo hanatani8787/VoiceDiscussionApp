@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet, Alert } from 'react-native';
-import Voice from '@react-native-voice/voice';
 import { styles } from '../styles/styles';
-import { startRecognizing, stopRecognizing } from '../utils/speechRecognition';
+import { initVoiceRecognition, startRecognizing, stopRecognizing } from '../utils/speechRecognition';
+import Voice from '@react-native-voice/voice';
 
 const MAX_USERS = 4; // 最大ユーザー数を定義
 const MIN_USERS = 2; // 最小ユーザー数を定義
@@ -33,15 +33,17 @@ const DiscussionScreen = ({ route }) => {
     }
     setUsers(tempUsers);
 
-    Voice.onSpeechResults = onSpeechResults;
-    Voice.onSpeechError = onSpeechError;
+    initVoiceRecognition();
+
+    Voice.onSpeechResults = handleSpeechResults;
+    Voice.onSpeechError = handleSpeechError;
 
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
   }, [numberOfParticipants]);
 
-  const onSpeechResults = (e) => {
+  const handleSpeechResults = (e) => {
     const recognizedText = e.value[0];
     const userIndex = Math.floor(Math.random() * numberOfParticipants);
     const user = `ユーザー${String.fromCharCode(65 + userIndex)}`;
@@ -52,7 +54,7 @@ const DiscussionScreen = ({ route }) => {
     ]);
   };
 
-  const onSpeechError = (e) => {
+  const handleSpeechError = (e) => {
     setError(JSON.stringify(e.error));
   };
 
@@ -148,7 +150,7 @@ const modalStyles = StyleSheet.create({
   },
   modalView: {
     width: '80%',
-    backgroundColor: 'white',
+    backgroundColor: '#ddd', // モーダル背景色を淡いグレーに
     borderRadius: 20,
     padding: 20,
     alignItems: 'center',
@@ -165,6 +167,7 @@ const modalStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 15,
+    color: '#2f4f4f', // タイトルの色をダークスレートグレーに
   },
   userBox: {
     padding: 10,
@@ -174,6 +177,7 @@ const modalStyles = StyleSheet.create({
   userText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#2f4f4f', // ユーザー名の色をダークスレートグレーに
   },
   closeButton: {
     backgroundColor: '#007BFF',

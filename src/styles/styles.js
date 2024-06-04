@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#c0c0c0', // 背景色を暗めのグレーに
     padding: 10,
   },
   title: {
@@ -11,22 +11,25 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 20,
+    color: '#2f4f4f', // タイトルの色をダークスレートグレーに
   },
   input: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: '#aaa',
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 20,
     paddingHorizontal: 10,
+    color: '#2f4f4f', // テキスト入力の色をダークスレートグレーに
   },
   chatContainer: {
     flex: 1,
+    marginTop: 20,
   },
   chatRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginVertical: 5,
+    alignItems: 'center',
+    marginBottom: 10,
   },
   icon: {
     width: 40,
@@ -37,7 +40,7 @@ export const styles = StyleSheet.create({
     marginRight: 10,
   },
   iconText: {
-    color: 'white',
+    color: '#fff', // アイコンの文字を白に
     fontWeight: 'bold',
     fontSize: 18,
   },
@@ -45,10 +48,10 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     maxWidth: '70%',
-    backgroundColor: '#e1ffc7',
   },
   transcriptText: {
     fontSize: 16,
+    color: '#2f4f4f', // 吹き出しの文字をダークスレートグレーに
   },
   button: {
     backgroundColor: '#007BFF',
@@ -66,15 +69,15 @@ export const styles = StyleSheet.create({
     marginVertical: 10,
   },
   userA: {
-    backgroundColor: '#e1ffc7',
+    backgroundColor: '#b0c4de', // ライトスチールブルー
   },
   userB: {
-    backgroundColor: '#d1eaff',
+    backgroundColor: '#ffcccb', // ライトピンク
   },
   userC: {
-    backgroundColor: '#ffe1e1',
+    backgroundColor: '#add8e6', // ライトブルー
   },
   userD: {
-    backgroundColor: '#e1e1ff',
+    backgroundColor: '#f5deb3', // ウィート
   },
 });
