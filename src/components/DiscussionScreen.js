@@ -50,6 +50,7 @@ const DiscussionScreen = ({ route, navigation }) => {
     });
 
     return () => {
+      stopRecognizing();
       Voice.destroy().then(Voice.removeAllListeners);
     };
   }, [numberOfParticipants]);
