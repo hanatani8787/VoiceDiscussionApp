@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet, Alert } from 'react-native';
 import { styles } from '../styles/styles';
 import { initVoiceRecognition, startRecognizing, stopRecognizing } from '../utils/speechRecognition';
@@ -22,6 +22,7 @@ const DiscussionScreen = ({ route, navigation }) => {
   const [error, setError] = useState('');
   const [userInfoModalVisible, setUserInfoModalVisible] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(true); // 音声認識開始モーダル
+  const scrollViewRef = useRef();
 
   useEffect(() => {
     if (numberOfParticipants > MAX_USERS || numberOfParticipants < MIN_USERS) {
@@ -63,6 +64,9 @@ const DiscussionScreen = ({ route, navigation }) => {
       ...prevTranscripts,
       { user, text: recognizedText }
     ]);
+    
+    // 自動スクロール
+    scrollViewRef.current.scrollToEnd({ animated: true });
   };
 
   const handleSpeechError = (e) => {
@@ -104,7 +108,6 @@ const DiscussionScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>ディスカッション</Text>
       <Modal
         animationType="slide"
         transparent={true}
@@ -123,7 +126,7 @@ const DiscussionScreen = ({ route, navigation }) => {
           </View>
         </View>
       </Modal>
-      <ScrollView style={styles.chatContainer}>
+      <ScrollView style={styles.chatContainer} ref={scrollViewRef}>
         {transcripts.map((transcript, index) => (
           <View key={index} style={styles.chatRow}>
             <View style={[styles.icon, userColors[transcript.user]]}>
@@ -178,7 +181,7 @@ const modalStyles = StyleSheet.create({
   },
   modalView: {
     width: '80%',
-    backgroundColor: '#2f3542',
+    backgroundColor: '#f1f2f6', // モーダルの背景色を明るく
     borderRadius: 20,
     padding: 30,
     alignItems: 'center',
@@ -191,11 +194,16 @@ const modalStyles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#f1f2f6',
+    color: '#2f3542', // タイトルの文字色をダークに
   },
   startButton: {
     backgroundColor: '#ff4757',
@@ -212,7 +220,7 @@ const modalStyles = StyleSheet.create({
     marginTop: 15,
   },
   buttonText: {
-    color: '#f1f2f6',
+    color: '#2f3542', // ボタンの文字色をダークに
     fontSize: 18,
   },
   userBox: {
@@ -223,13 +231,7 @@ const modalStyles = StyleSheet.create({
   userText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#f1f2f6',
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: '#2f3542', // ユーザー情報の文字色をダークに
   },
 });
 

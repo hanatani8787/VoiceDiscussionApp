@@ -6,13 +6,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#2f3542',
     padding: 10,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 20,
-    color: '#f1f2f6',
-  },
   input: {
     height: 40,
     borderColor: '#aaa',
@@ -48,6 +41,7 @@ export const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 20,
     maxWidth: '70%',
+    marginRight: 10, // アイコンの余白とバランスをとる
   },
   transcriptText: {
     fontSize: 16,
