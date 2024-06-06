@@ -14,8 +14,6 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-project 'VoiceDiscussionApp.xcodeproj'  # Add this line
-
 target 'VoiceDiscussionApp' do
   config = use_native_modules!
 
@@ -24,6 +22,9 @@ target 'VoiceDiscussionApp' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  # react-native-vector-iconsのポッドを追加
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   target 'VoiceDiscussionAppTests' do
     inherit! :complete

@@ -3,15 +3,15 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#c0c0c0', // 背景色を暗めのグレーに
+    backgroundColor: '#2f3542',
     padding: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 20,
-    color: '#2f4f4f', // タイトルの色をダークスレートグレーに
+    color: '#f1f2f6',
   },
   input: {
     height: 40,
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     paddingHorizontal: 10,
-    color: '#2f4f4f', // テキスト入力の色をダークスレートグレーに
+    color: '#f1f2f6',
   },
   chatContainer: {
     flex: 1,
@@ -40,28 +40,28 @@ export const styles = StyleSheet.create({
     marginRight: 10,
   },
   iconText: {
-    color: '#fff', // アイコンの文字を白に
+    color: '#fff',
     fontWeight: 'bold',
     fontSize: 18,
   },
   bubble: {
-    padding: 10,
-    borderRadius: 10,
+    padding: 15,
+    borderRadius: 20,
     maxWidth: '70%',
   },
   transcriptText: {
     fontSize: 16,
-    color: '#2f4f4f', // 吹き出しの文字をダークスレートグレーに
+    color: '#f1f2f6',
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#ff4757',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
     marginVertical: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: '#f1f2f6',
     fontSize: 16,
   },
   error: {
@@ -69,15 +69,23 @@ export const styles = StyleSheet.create({
     marginVertical: 10,
   },
   userA: {
-    backgroundColor: '#b0c4de', // ライトスチールブルー
+    backgroundColor: '#70a1ff',
   },
   userB: {
-    backgroundColor: '#ffcccb', // ライトピンク
+    backgroundColor: '#ff6348',
   },
   userC: {
-    backgroundColor: '#add8e6', // ライトブルー
+    backgroundColor: '#ffa502',
   },
   userD: {
-    backgroundColor: '#f5deb3', // ウィート
+    backgroundColor: '#2ed573',
+  },
+  menuButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#ff4757',
+    padding: 10,
+    borderRadius: 50,
   },
 });

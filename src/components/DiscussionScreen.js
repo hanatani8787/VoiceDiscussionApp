@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet, Alert, Button } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet, Alert } from 'react-native';
 import { styles } from '../styles/styles';
 import { initVoiceRecognition, startRecognizing, stopRecognizing } from '../utils/speechRecognition';
 import Voice from '@react-native-voice/voice';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const MAX_USERS = 4; // 最大ユーザー数を定義
 const MIN_USERS = 2; // 最小ユーザー数を定義
@@ -41,11 +42,9 @@ const DiscussionScreen = ({ route, navigation }) => {
 
     navigation.setOptions({
       headerRight: () => (
-        <Button
-          onPress={handleFinishDiscussion}
-          title="終了"
-          color="#000"
-        />
+        <TouchableOpacity onPress={handleFinishDiscussion}>
+          <Text style={{ color: '#ff4757', marginRight: 10 }}>終了</Text>
+        </TouchableOpacity>
       ),
     });
 
@@ -85,7 +84,7 @@ const DiscussionScreen = ({ route, navigation }) => {
     const content = transcripts.map(t => `${t.text}`).join('\n');
 
     try {
-      const response = await fetch('http://192.168.0.2:3000/posts', {
+      const response = await fetch('http://あなたのローカルIPアドレス:3000/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,32 +105,6 @@ const DiscussionScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>ディスカッション</Text>
-      <TouchableOpacity style={styles.button} onPress={() => setUserInfoModalVisible(true)}>
-        <Text style={styles.buttonText}>ユーザー情報を表示</Text>
-      </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={userInfoModalVisible}
-        onRequestClose={() => setUserInfoModalVisible(false)}
-      >
-        <View style={modalStyles.modalContainer}>
-          <View style={modalStyles.modalView}>
-            <Text style={modalStyles.modalTitle}>ユーザー情報</Text>
-            {users.map((user, index) => (
-              <View key={index} style={[modalStyles.userBox, userColors[user]]}>
-                <Text style={modalStyles.userText}>{user}</Text>
-              </View>
-            ))}
-            <TouchableOpacity
-              style={modalStyles.closeButton}
-              onPress={() => setUserInfoModalVisible(false)}
-            >
-              <Text style={modalStyles.buttonText}>閉じる</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
       <Modal
         animationType="slide"
         transparent={true}
@@ -163,6 +136,35 @@ const DiscussionScreen = ({ route, navigation }) => {
         ))}
       </ScrollView>
       {error ? <Text style={styles.error}>{error}</Text> : null}
+      <TouchableOpacity
+        style={styles.menuButton}
+        onPress={() => setUserInfoModalVisible(true)}
+      >
+        <Icon name="menu" size={30} color="#fff" />
+      </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={userInfoModalVisible}
+        onRequestClose={() => setUserInfoModalVisible(false)}
+      >
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalView}>
+            <Text style={modalStyles.modalTitle}>ユーザー情報</Text>
+            {users.map((user, index) => (
+              <View key={index} style={[modalStyles.userBox, userColors[user]]}>
+                <Text style={modalStyles.userText}>{user}</Text>
+              </View>
+            ))}
+            <TouchableOpacity
+              style={modalStyles.closeButton}
+              onPress={() => setUserInfoModalVisible(false)}
+            >
+              <Text style={modalStyles.buttonText}>閉じる</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -172,13 +174,13 @@ const modalStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalView: {
     width: '80%',
-    backgroundColor: '#ddd',
+    backgroundColor: '#2f3542',
     borderRadius: 20,
-    padding: 20,
+    padding: 30,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -190,28 +192,28 @@ const modalStyles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#2f4f4f',
+    marginBottom: 20,
+    color: '#f1f2f6',
   },
   startButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#ff4757',
+    padding: 15,
+    borderRadius: 10,
     alignItems: 'center',
-    marginTop: 15,
+    marginTop: 20,
   },
   closeButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#ff4757',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 15,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#f1f2f6',
+    fontSize: 18,
   },
   userBox: {
     padding: 10,
@@ -221,7 +223,7 @@ const modalStyles = StyleSheet.create({
   userText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2f4f4f',
+    color: '#f1f2f6',
   },
 });
 
