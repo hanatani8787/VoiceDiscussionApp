@@ -148,8 +148,8 @@ const DiscussionScreen = ({ route, navigation }) => {
         visible={userInfoModalVisible}
         onRequestClose={() => setUserInfoModalVisible(false)}
       >
-        <View style={modalStyles.modalContainer}>
-          <View style={modalStyles.modalView}>
+        <TouchableOpacity style={modalStyles.modalOverlay} onPress={() => setUserInfoModalVisible(false)}>
+          <TouchableOpacity style={modalStyles.modalView} activeOpacity={1}>
             <Text style={modalStyles.modalTitle}>ユーザー情報</Text>
             {users.map((user, index) => (
               <View key={index} style={[modalStyles.userBox, userColors[user]]}>
@@ -162,8 +162,8 @@ const DiscussionScreen = ({ route, navigation }) => {
             >
               <Text style={modalStyles.buttonText}>閉じる</Text>
             </TouchableOpacity>
-          </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     </View>
   );
@@ -224,6 +224,12 @@ const modalStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#f1f2f6',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
 
