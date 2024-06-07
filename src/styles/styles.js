@@ -3,8 +3,15 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2f3542',
+    backgroundColor: '#2f3542', // 背景色を暗めのグレーに
     padding: 10,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 20,
+    color: '#f1f2f6',
   },
   input: {
     height: 40,
@@ -14,6 +21,11 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 10,
     color: '#f1f2f6',
+  },
+  labelText: {
+    fontSize: 18,
+    color: '#f1f2f6',
+    marginBottom: 10,
   },
   chatContainer: {
     flex: 1,

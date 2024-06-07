@@ -15,17 +15,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#2f3542',  // 背景色を暗めのグレーに
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#f1f2f6',  // テキストの色を淡いグレーに
   },
   instructionText: {
     fontSize: 18,
-    color: '#555',
+    color: '#f1f2f6',  // テキストの色を淡いグレーに
   },
 });
 
