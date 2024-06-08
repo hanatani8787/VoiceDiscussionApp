@@ -1,25 +1,18 @@
 import React from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Button } from 'react-native';
 import HomeScreen from '../components/HomeScreen';
 import MenuScreen from '../components/MenuScreen';
 import PostScreen from '../components/PostScreen';
 import DiscussionScreen from '../components/DiscussionScreen';
+import PostPreparationScreen from '../components/PostPreparationScreen';
 
 const Stack = createStackNavigator();
 
-const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: '#2f3542', // 背景色を暗めのグレーに設定
-  },
-};
-
 const AppNavigator = () => {
   return (
-    <NavigationContainer theme={MyTheme}>
+    <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
@@ -56,6 +49,7 @@ const AppNavigator = () => {
             ),
           })}
         />
+        <Stack.Screen name="PostPreparation" component={PostPreparationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -25,16 +25,18 @@ const DiscussionScreen = ({ route, navigation }) => {
   const scrollViewRef = useRef();
 
   useEffect(() => {
+    console.log('useEffect called with numberOfParticipants:', numberOfParticipants);
     if (numberOfParticipants > MAX_USERS || numberOfParticipants < MIN_USERS) {
       Alert.alert(`ユーザー数は${MIN_USERS}人から${MAX_USERS}人までです。`);
       return;
     }
 
     const tempUsers = [];
-    for (let i = 0; i < parseInt(numberOfParticipants, 10); i++) {
+    for (let i = 0; i < numberOfParticipants; i++) {
       tempUsers.push(`ユーザー${String.fromCharCode(65 + i)}`); // 65 is the ASCII code for 'A'
     }
     setUsers(tempUsers);
+    console.log('Users set:', tempUsers);
 
     initVoiceRecognition();
 
@@ -60,11 +62,13 @@ const DiscussionScreen = ({ route, navigation }) => {
     const userIndex = Math.floor(Math.random() * numberOfParticipants);
     const user = `ユーザー${String.fromCharCode(65 + userIndex)}`;
 
+    const newTranscript = { user, text: recognizedText };
     setTranscripts((prevTranscripts) => [
       ...prevTranscripts,
-      { user, text: recognizedText }
+      newTranscript,
     ]);
-    
+    console.log('User recognized:', newTranscript.user, 'Text:', newTranscript.text);
+
     // 自動スクロール
     scrollViewRef.current.scrollToEnd({ animated: true });
   };
@@ -76,6 +80,7 @@ const DiscussionScreen = ({ route, navigation }) => {
   const handleStartRecognizing = async () => {
     setError('');
     setStartModalVisible(false); // 音声認識開始モーダルを非表示にする
+    console.log('Starting recognition process');
     try {
       await startRecognizing();
     } catch (e) {
@@ -83,27 +88,13 @@ const DiscussionScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleFinishDiscussion = async () => {
-    const title = 'ディスカッションの結果';
-    const content = transcripts.map(t => `${t.text}`).join('\n');
-
-    try {
-      const response = await fetch('http://あなたのローカルIPアドレス:3000/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, content }),
-      });
-      if (response.ok) {
-        console.log('投稿が完了しました');
-        navigation.navigate('Post'); // 終了後にPost画面に戻る
-      } else {
-        console.error('投稿に失敗しました:', response.status, response.statusText);
-      }
-    } catch (e) {
-      console.error('ネットワークリクエストに失敗しました:', e);
+  const handleFinishDiscussion = () => {
+    if (transcripts.length === 0) {
+      Alert.alert('ディスカッションがありません');
+      return;
     }
+    console.log('Navigating to PostPreparation with transcripts:', transcripts);
+    navigation.navigate('PostPreparation', { transcripts }); // 投稿準備画面に遷移
   };
 
   return (
