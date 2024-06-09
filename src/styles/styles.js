@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2f3542', // 背景色を暗めのグレーに
+    backgroundColor: '#2f3542',
     padding: 10,
   },
   title: {
@@ -30,6 +30,7 @@ export const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     marginTop: 20,
+    marginBottom: 80, // ボタンの領域を確保するために余白を追加
   },
   chatRow: {
     flexDirection: 'row',
@@ -60,8 +61,8 @@ export const styles = StyleSheet.create({
     color: '#f1f2f6',
   },
   button: {
-    backgroundColor: '#ff4757',
-    padding: 10,
+    paddingVertical: 30,
+    paddingHorizontal: 50,
     borderRadius: 5,
     alignItems: 'center',
     marginVertical: 10,
@@ -86,12 +87,30 @@ export const styles = StyleSheet.create({
   userD: {
     backgroundColor: '#2ed573',
   },
-  menuButton: {
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#ff4757',
-    padding: 10,
-    borderRadius: 50,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#2f3542', // 背景色を暗めのグレーに
+    paddingHorizontal: 20,
+  },
+  menuButton: {
+    backgroundColor: '#007BFF', // ユーザー情報ボタンの色
+    paddingVertical: 30,
+    paddingHorizontal: 50,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  fixedButton: {
+    backgroundColor: '#FF4500', // 終了ボタンの色をインパクトのあるオレンジに
+    paddingVertical: 30,
+    paddingHorizontal: 50,
+    borderRadius: 5,
+    marginHorizontal: 10,
   },
 });

@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ScrollView, Modal, StyleSheet, Alert } fr
 import { styles } from '../styles/styles';
 import { initVoiceRecognition, startRecognizing, stopRecognizing } from '../utils/speechRecognition';
 import Voice from '@react-native-voice/voice';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const MAX_USERS = 4; // 最大ユーザー数を定義
 const MIN_USERS = 2; // 最小ユーザー数を定義
@@ -25,31 +24,21 @@ const DiscussionScreen = ({ route, navigation }) => {
   const scrollViewRef = useRef();
 
   useEffect(() => {
-    console.log('useEffect called with numberOfParticipants:', numberOfParticipants);
     if (numberOfParticipants > MAX_USERS || numberOfParticipants < MIN_USERS) {
       Alert.alert(`ユーザー数は${MIN_USERS}人から${MAX_USERS}人までです。`);
       return;
     }
 
     const tempUsers = [];
-    for (let i = 0; i < numberOfParticipants; i++) {
+    for (let i = 0; i < parseInt(numberOfParticipants, 10); i++) {
       tempUsers.push(`ユーザー${String.fromCharCode(65 + i)}`); // 65 is the ASCII code for 'A'
     }
     setUsers(tempUsers);
-    console.log('Users set:', tempUsers);
 
     initVoiceRecognition();
 
     Voice.onSpeechResults = handleSpeechResults;
     Voice.onSpeechError = handleSpeechError;
-
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={handleFinishDiscussion}>
-          <Text style={{ color: '#ff4757', marginRight: 10 }}>終了</Text>
-        </TouchableOpacity>
-      ),
-    });
 
     return () => {
       stopRecognizing();
@@ -62,15 +51,17 @@ const DiscussionScreen = ({ route, navigation }) => {
     const userIndex = Math.floor(Math.random() * numberOfParticipants);
     const user = `ユーザー${String.fromCharCode(65 + userIndex)}`;
 
-    const newTranscript = { user, text: recognizedText };
     setTranscripts((prevTranscripts) => [
       ...prevTranscripts,
-      newTranscript,
+      { user, text: recognizedText }
     ]);
-    console.log('User recognized:', newTranscript.user, 'Text:', newTranscript.text);
 
     // 自動スクロール
-    scrollViewRef.current.scrollToEnd({ animated: true });
+    setTimeout(() => {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }
+    }, 100);
   };
 
   const handleSpeechError = (e) => {
@@ -80,7 +71,6 @@ const DiscussionScreen = ({ route, navigation }) => {
   const handleStartRecognizing = async () => {
     setError('');
     setStartModalVisible(false); // 音声認識開始モーダルを非表示にする
-    console.log('Starting recognition process');
     try {
       await startRecognizing();
     } catch (e) {
@@ -88,12 +78,7 @@ const DiscussionScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleFinishDiscussion = () => {
-    if (transcripts.length === 0) {
-      Alert.alert('ディスカッションがありません');
-      return;
-    }
-    console.log('Navigating to PostPreparation with transcripts:', transcripts);
+  const handleFinishDiscussion = async () => {
     navigation.navigate('PostPreparation', { transcripts }); // 投稿準備画面に遷移
   };
 
@@ -130,12 +115,20 @@ const DiscussionScreen = ({ route, navigation }) => {
         ))}
       </ScrollView>
       {error ? <Text style={styles.error}>{error}</Text> : null}
-      <TouchableOpacity
-        style={styles.menuButton}
-        onPress={() => setUserInfoModalVisible(true)}
-      >
-        <Icon name="menu" size={30} color="#fff" />
-      </TouchableOpacity>
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity
+          style={styles.menuButton}
+          onPress={() => setUserInfoModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>ユーザー情報</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.fixedButton}
+          onPress={handleFinishDiscussion}
+        >
+          <Text style={styles.buttonText}>終了</Text>
+        </TouchableOpacity>
+      </View>
       <Modal
         animationType="slide"
         transparent={true}

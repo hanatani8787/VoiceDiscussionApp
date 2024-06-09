@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 import HomeScreen from '../components/HomeScreen';
 import MenuScreen from '../components/MenuScreen';
 import PostScreen from '../components/PostScreen';
@@ -34,18 +34,9 @@ const AppNavigator = () => {
           options={({ navigation, route }) => ({
             title: 'Discussion',
             headerLeft: () => (
-              <Button
-                onPress={() => navigation.navigate('Post')}
-                title="Post"
-                color="#000"
-              />
-            ),
-            headerRight: () => (
-              <Button
-                onPress={route.params?.handleFinishDiscussion}
-                title="終了"
-                color="#000"
-              />
+              <TouchableOpacity onPress={() => navigation.navigate('Post')}>
+                <Text style={{ color: '#000', marginLeft: 10 }}>Post</Text>
+              </TouchableOpacity>
             ),
           })}
         />
