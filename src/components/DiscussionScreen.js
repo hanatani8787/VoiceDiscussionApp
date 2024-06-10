@@ -85,7 +85,23 @@ const DiscussionScreen = ({ route, navigation }) => {
 
   const confirmFinishDiscussion = async () => {
     setConfirmModalVisible(false);
-    navigation.navigate('PostPreparation', { transcripts }); // 投稿準備画面に遷移
+    try {
+      const response = await fetch('http://localhost:3000/discussions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ transcripts }),
+      });
+      if (response.ok) {
+        console.log('ディスカッション内容が保存されました');
+        navigation.navigate('PostPreparation', { transcripts }); // 投稿準備画面に遷移
+      } else {
+        console.error('ディスカッション内容の保存に失敗しました:', response.status, response.statusText);
+      }
+    } catch (e) {
+      console.error('ネットワークリクエストに失敗しました:', e);
+    }
   };
 
   return (
@@ -123,16 +139,16 @@ const DiscussionScreen = ({ route, navigation }) => {
       {error ? <Text style={styles.error}>{error}</Text> : null}
       <View style={styles.bottomContainer}>
         <TouchableOpacity
-          style={styles.menuButton}
-          onPress={() => setUserInfoModalVisible(true)}
-        >
-          <Text style={styles.buttonText}>ユーザー情報</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           style={styles.fixedButton}
           onPress={handleFinishDiscussion}
         >
           <Text style={styles.buttonText}>終了</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.menuButton}
+          onPress={() => setUserInfoModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>ユーザー情報</Text>
         </TouchableOpacity>
       </View>
       <Modal
@@ -239,8 +255,7 @@ const modalStyles = StyleSheet.create({
   confirmButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '80%',
-    marginTop: 20,
+    width: '100%',
   },
   confirmButton: {
     backgroundColor: '#ff4757',
@@ -248,7 +263,6 @@ const modalStyles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginHorizontal: 10,
-    flex: 1,
   },
   buttonText: {
     color: '#2f3542', // ボタンの文字色をダークに

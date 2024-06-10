@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from '../styles/styles';
 
 const userColors = {
@@ -13,15 +13,11 @@ const PostPreparationScreen = ({ route, navigation }) => {
   const { transcripts } = route.params;
   const [title, setTitle] = useState('');
 
-  useEffect(() => {
-    console.log('Received transcripts:', transcripts);
-  }, [transcripts]);
-
   const handlePost = async () => {
     const content = transcripts.map((t) => `${t.user}: ${t.text}`).join('\n');
 
     try {
-      const response = await fetch('http://あなたのローカルIPアドレス:3000/posts', {
+      const response = await fetch('http://192.168.0.2:3000/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

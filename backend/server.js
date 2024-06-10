@@ -1,25 +1,40 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const db = require('./db'); // db.jsをインポート
+
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 app.use(cors());
 
-let discussions = [];
-let posts = [];
-
 app.post('/discussions', (req, res) => {
   const { transcripts } = req.body;
-  discussions.push({ id: discussions.length + 1, transcripts });
-  res.status(200).send('ディスカッション内容が保存されました');
+
+  const stmt = db.prepare("INSERT INTO discussions (transcripts) VALUES (?)");
+  stmt.run(JSON.stringify(transcripts), function(err) {
+    if (err) {
+      res.status(500).send({ error: err.message });
+      return;
+    }
+    res.status(200).send({ id: this.lastID });
+  });
+  stmt.finalize();
 });
 
 app.post('/posts', (req, res) => {
   const { title, content } = req.body;
-  posts.push({ id: posts.length + 1, title, content });
-  res.status(200).send('投稿が完了しました');
+
+  const stmt = db.prepare("INSERT INTO posts (title, content) VALUES (?, ?)");
+  stmt.run(title, content, function(err) {
+    if (err) {
+      res.status(500).send({ error: err.message });
+      return;
+    }
+    res.status(200).send({ id: this.lastID });
+  });
+  stmt.finalize();
 });
 
 app.listen(port, () => {
