@@ -21,6 +21,7 @@ const DiscussionScreen = ({ route, navigation }) => {
   const [error, setError] = useState('');
   const [userInfoModalVisible, setUserInfoModalVisible] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(true); // 音声認識開始モーダル
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false); // 確認モーダル
   const scrollViewRef = useRef();
 
   useEffect(() => {
@@ -79,6 +80,11 @@ const DiscussionScreen = ({ route, navigation }) => {
   };
 
   const handleFinishDiscussion = async () => {
+    setConfirmModalVisible(true);
+  };
+
+  const confirmFinishDiscussion = async () => {
+    setConfirmModalVisible(false);
     navigation.navigate('PostPreparation', { transcripts }); // 投稿準備画面に遷移
   };
 
@@ -152,6 +158,32 @@ const DiscussionScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={confirmModalVisible}
+        onRequestClose={() => setConfirmModalVisible(false)}
+      >
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalView}>
+            <Text style={modalStyles.modalTitle}>ディスカッションを終了します。本当にいいですか？</Text>
+            <View style={modalStyles.confirmButtonContainer}>
+              <TouchableOpacity
+                style={modalStyles.confirmButton}
+                onPress={confirmFinishDiscussion}
+              >
+                <Text style={modalStyles.buttonText}>はい</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={modalStyles.confirmButton}
+                onPress={() => setConfirmModalVisible(false)}
+              >
+                <Text style={modalStyles.buttonText}>いいえ</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -188,6 +220,7 @@ const modalStyles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#2f3542', // タイトルの文字色をダークに
+    textAlign: 'center',
   },
   startButton: {
     backgroundColor: '#ff4757',
@@ -202,6 +235,20 @@ const modalStyles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 15,
+  },
+  confirmButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+    marginTop: 20,
+  },
+  confirmButton: {
+    backgroundColor: '#ff4757',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginHorizontal: 10,
+    flex: 1,
   },
   buttonText: {
     color: '#2f3542', // ボタンの文字色をダークに
