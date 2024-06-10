@@ -9,7 +9,7 @@ const MenuScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Post')}>
         <Text style={styles.buttonText}>投稿</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('PostList')}>
         <Text style={styles.buttonText}>閲覧</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button}>

@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     marginTop: 20,
-    marginBottom: 80, // ボタンの領域を確保するために余白を追加
+    marginBottom: 60, // ボタンの領域を確保するために余白を追加
   },
   chatRow: {
     flexDirection: 'row',
@@ -61,8 +61,8 @@ export const styles = StyleSheet.create({
     color: '#f1f2f6',
   },
   button: {
-    paddingVertical: 30,
-    paddingHorizontal: 50,
+    backgroundColor: '#ff4757',
+    padding: 10,
     borderRadius: 5,
     alignItems: 'center',
     marginVertical: 10,
@@ -90,7 +90,6 @@ export const styles = StyleSheet.create({
   bottomContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingVertical: 10,
     position: 'absolute',
     bottom: 0,
@@ -100,17 +99,28 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   menuButton: {
-    backgroundColor: '#007BFF', // ユーザー情報ボタンの色
-    paddingVertical: 30,
-    paddingHorizontal: 50,
+    backgroundColor: '#ff4757',
+    padding: 10,
     borderRadius: 5,
-    marginHorizontal: 10,
+    marginBottom: 10,
   },
   fixedButton: {
-    backgroundColor: '#FF4500', // 終了ボタンの色をインパクトのあるオレンジに
-    paddingVertical: 30,
-    paddingHorizontal: 50,
+    backgroundColor: '#ff4757',
+    padding: 10,
     borderRadius: 5,
-    marginHorizontal: 10,
+    marginBottom: 10,
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  postTitle: {
+    padding: 15,
+    borderBottomColor: '#aaa',
+    borderBottomWidth: 1,
+  },
+  postTitleText: {
+    fontSize: 20,
+    color: '#f1f2f6',
   },
 });

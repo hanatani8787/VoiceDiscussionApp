@@ -7,6 +7,8 @@ import MenuScreen from '../components/MenuScreen';
 import PostScreen from '../components/PostScreen';
 import DiscussionScreen from '../components/DiscussionScreen';
 import PostPreparationScreen from '../components/PostPreparationScreen';
+import PostDetailScreen from '../components/PostDetailScreen';
+import PostListScreen from '../components/PostListScreen'; // 新しい投稿一覧画面を追加
 
 const Stack = createStackNavigator();
 
@@ -41,6 +43,8 @@ const AppNavigator = () => {
           })}
         />
         <Stack.Screen name="PostPreparation" component={PostPreparationScreen} />
+        <Stack.Screen name="PostDetail" component={PostDetailScreen} />
+        <Stack.Screen name="PostList" component={PostListScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
