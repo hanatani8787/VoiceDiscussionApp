@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal, Alert, StyleSheet } from 'react-native';
 import { styles } from '../styles/styles';
+import { BarChart } from 'react-native-chart-kit';
 
 const userColors = {
   'ユーザーA': styles.userA,
@@ -14,19 +15,10 @@ const PostDetailScreen = ({ route }) => {
   const [post, setPost] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [votes, setVotes] = useState([]);
+  const [voteModalVisible, setVoteModalVisible] = useState(false);
   const scrollViewRef = useRef(null);
   const [activeUsers, setActiveUsers] = useState([]);
-
-  // Parse the content to extract user and text
-  const parseContent = (content) => {
-    return content.split('\n').map(line => {
-      const separatorIndex = line.indexOf(': ');
-      return {
-        user: line.substring(0, separatorIndex),
-        text: line.substring(separatorIndex + 2)
-      };
-    });
-  };
 
   useEffect(() => {
     fetch(`http://192.168.0.2:3000/posts/${postId}`)
@@ -44,11 +36,64 @@ const PostDetailScreen = ({ route }) => {
       .catch(error => console.error('Error fetching post:', error));
   }, [postId]);
 
+  useEffect(() => {
+    fetch(`http://192.168.0.2:3000/votes/${postId}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => setVotes(data))
+      .catch(error => console.error('Error fetching votes:', error));
+  }, [postId]);
+
   const handleScroll = ({ nativeEvent }) => {
     const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
     if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 20) {
       setModalVisible(true);
     }
+  };
+
+  const parseContent = (content) => {
+    return content.split('\n').map(line => {
+      const separatorIndex = line.indexOf(': ');
+      return {
+        user: line.substring(0, separatorIndex),
+        text: line.substring(separatorIndex + 2)
+      };
+    });
+  };
+
+  const handleUserSelection = (user) => {
+    setSelectedUser(user);
+    setModalVisible(false);
+    Alert.alert('Selected User', `You selected: ${user}`);
+  
+    // 投票を保存する
+    fetch('http://192.168.0.2:3000/votes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ post_id: postId, user }),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Vote saved:', data);
+    })
+    .catch(error => {
+      console.error('Error saving vote:', error);
+    });
+  };  
+  
+  const showVoteResults = () => {
+    setVoteModalVisible(true);
   };
 
   if (!post) {
@@ -61,10 +106,13 @@ const PostDetailScreen = ({ route }) => {
 
   const parsedContent = parseContent(post.content);
 
-  const handleUserSelection = (user) => {
-    setSelectedUser(user);
-    setModalVisible(false);
-    Alert.alert('Selected User', `You selected: ${user}`);
+  const voteData = {
+    labels: votes.map(vote => vote.user),
+    datasets: [
+      {
+        data: votes.map(vote => vote.count),
+      },
+    ],
   };
 
   return (
@@ -87,6 +135,9 @@ const PostDetailScreen = ({ route }) => {
           </View>
         ))}
       </ScrollView>
+      <TouchableOpacity style={styles.fixedButton} onPress={showVoteResults}>
+        <Text style={styles.buttonText}>投稿結果</Text>
+      </TouchableOpacity>
       <Modal
         animationType="slide"
         transparent={true}
@@ -112,6 +163,41 @@ const PostDetailScreen = ({ route }) => {
               onPress={() => setModalVisible(false)}
             >
               <Text style={modalStyles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={voteModalVisible}
+        onRequestClose={() => setVoteModalVisible(false)}
+      >
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalView}>
+            <Text style={modalStyles.modalTitle}>投票結果</Text>
+            <BarChart
+              style={{ marginVertical: 8 }}
+              data={voteData}
+              width={300}
+              height={220}
+              yAxisLabel=""
+              chartConfig={{
+                backgroundGradientFrom: "#1E2923",
+                backgroundGradientFromOpacity: 0,
+                backgroundGradientTo: "#08130D",
+                backgroundGradientToOpacity: 0.5,
+                color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+                strokeWidth: 2, // optional, default 3
+                barPercentage: 0.5,
+              }}
+              verticalLabelRotation={30}
+            />
+            <TouchableOpacity
+              style={modalStyles.closeButton}
+              onPress={() => setVoteModalVisible(false)}
+            >
+              <Text style={modalStyles.buttonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
