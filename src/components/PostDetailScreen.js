@@ -115,6 +115,14 @@ const PostDetailScreen = ({ route }) => {
     ],
   };
 
+  const chartConfig = {
+    backgroundGradientFrom: '#ffffff',  // 背景色を白に設定
+    backgroundGradientTo: '#e0e0e0',    // 背景色のグラデーションを明るい灰色に設定
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // 棒グラフの色を黒に設定
+    barPercentage: 0.5,
+    labelColor: () => '#000', // ラベルの色を黒に設定
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{post.title}</Text>
@@ -182,15 +190,7 @@ const PostDetailScreen = ({ route }) => {
               width={300}
               height={220}
               yAxisLabel=""
-              chartConfig={{
-                backgroundGradientFrom: "#1E2923",
-                backgroundGradientFromOpacity: 0,
-                backgroundGradientTo: "#08130D",
-                backgroundGradientToOpacity: 0.5,
-                color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-                strokeWidth: 2, // optional, default 3
-                barPercentage: 0.5,
-              }}
+              chartConfig={chartConfig}
               verticalLabelRotation={30}
             />
             <TouchableOpacity
