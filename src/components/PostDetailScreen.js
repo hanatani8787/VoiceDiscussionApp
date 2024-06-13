@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal, Alert, StyleSheet } from 'react-native';
 import { styles } from '../styles/styles';
-import { BarChart } from 'react-native-chart-kit';
+import HorizontalBarChart from '../components/HorizontalBarChart';
 
 const userColors = {
   'ユーザーA': styles.userA,
@@ -115,14 +115,6 @@ const PostDetailScreen = ({ route }) => {
     ],
   };
 
-  const chartConfig = {
-    backgroundGradientFrom: '#ffffff',  // 背景色を白に設定
-    backgroundGradientTo: '#e0e0e0',    // 背景色のグラデーションを明るい灰色に設定
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // 棒グラフの色を黒に設定
-    barPercentage: 0.5,
-    labelColor: () => '#000', // ラベルの色を黒に設定
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{post.title}</Text>
@@ -184,14 +176,10 @@ const PostDetailScreen = ({ route }) => {
         <View style={modalStyles.modalContainer}>
           <View style={modalStyles.modalView}>
             <Text style={modalStyles.modalTitle}>投票結果</Text>
-            <BarChart
-              style={{ marginVertical: 8 }}
+            <HorizontalBarChart
               data={voteData}
-              width={300}
+              width={350}
               height={220}
-              yAxisLabel=""
-              chartConfig={chartConfig}
-              verticalLabelRotation={30}
             />
             <TouchableOpacity
               style={modalStyles.closeButton}
@@ -214,7 +202,7 @@ const modalStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalView: {
-    width: '80%',
+    width: '90%', // モーダルの幅を少し広げる
     backgroundColor: '#f1f2f6', // モーダルの背景色を明るく
     borderRadius: 20,
     padding: 30,
@@ -240,6 +228,8 @@ const modalStyles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
     backgroundColor: '#ff4757',
+    width: '80%', // ユーザーボックスの幅を設定
+    alignItems: 'center',
   },
   userText: {
     fontSize: 18,
@@ -252,6 +242,7 @@ const modalStyles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 15,
+    width: '80%', // 閉じるボタンの幅を設定
   },
   buttonText: {
     color: '#2f3542', // ボタンの文字色をダークに
