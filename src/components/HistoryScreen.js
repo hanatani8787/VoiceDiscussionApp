@@ -8,7 +8,6 @@ const HistoryScreen = ({ navigation }) => {
   const deviceId = useContext(DeviceContext);
 
   useEffect(() => {
-    console.log('Fetching posts for device ID:', deviceId); // deviceIdをログ出力
     fetch(`http://192.168.0.7:3000/posts/device/${deviceId}`)
       .then(response => {
         if (!response.ok) {
@@ -16,10 +15,7 @@ const HistoryScreen = ({ navigation }) => {
         }
         return response.json();
       })
-      .then(data => {
-        console.log('Fetched posts:', data); // 取得データをログ出力
-        setPosts(data);
-      })
+      .then(data => setPosts(data))
       .catch(error => console.error('Error fetching posts:', error));
   }, [deviceId]);
 
@@ -31,7 +27,7 @@ const HistoryScreen = ({ navigation }) => {
           <TouchableOpacity
             key={post.id}
             style={styles.postTitle}
-            onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
+            onPress={() => navigation.navigate('HistoryPostDetail', { postId: post.id })} // 新しい画面に遷移
           >
             <Text style={styles.postTitleText}>{post.title}</Text>
           </TouchableOpacity>

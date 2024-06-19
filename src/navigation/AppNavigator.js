@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Text, TouchableOpacity } from 'react-native';
 import HomeScreen from '../components/HomeScreen';
 import MenuScreen from '../components/MenuScreen';
 import PostScreen from '../components/PostScreen';
@@ -9,7 +9,8 @@ import DiscussionScreen from '../components/DiscussionScreen';
 import PostPreparationScreen from '../components/PostPreparationScreen';
 import PostDetailScreen from '../components/PostDetailScreen';
 import PostListScreen from '../components/PostListScreen';
-import HistoryScreen from '../components/HistoryScreen'; // 履歴画面を追加
+import HistoryScreen from '../components/HistoryScreen';
+import HistoryPostDetailScreen from '../components/HistoryPostDetailScreen'; // 新しいコンポーネントを追加
 
 const Stack = createStackNavigator();
 
@@ -47,6 +48,7 @@ const AppNavigator = () => {
         <Stack.Screen name="PostDetail" component={PostDetailScreen} />
         <Stack.Screen name="PostList" component={PostListScreen} />
         <Stack.Screen name="History" component={HistoryScreen} />
+        <Stack.Screen name="HistoryPostDetail" component={HistoryPostDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
