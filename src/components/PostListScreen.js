@@ -6,7 +6,7 @@ const PostListScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fetch('http://192.168.0.2:3000/posts')
+    fetch('http://192.168.0.7:3000/posts')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

@@ -17,7 +17,7 @@ const PostPreparationScreen = ({ route, navigation }) => {
     const content = transcripts.map((t) => `${t.user}: ${t.text}`).join('\n');
 
     try {
-      const response = await fetch('http://192.168.0.2:3000/posts', {
+      const response = await fetch('http://192.168.0.7:3000/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

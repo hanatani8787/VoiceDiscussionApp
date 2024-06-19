@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, Alert, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, Alert, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { styles } from '../styles/styles';
 import HorizontalBarChart from '../components/HorizontalBarChart';
 
@@ -21,7 +21,7 @@ const PostDetailScreen = ({ route }) => {
   const [activeUsers, setActiveUsers] = useState([]);
 
   useEffect(() => {
-    fetch(`http://192.168.0.2:3000/posts/${postId}`)
+    fetch(`http://192.168.0.7:3000/posts/${postId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -31,13 +31,13 @@ const PostDetailScreen = ({ route }) => {
       .then(data => {
         setPost(data);
         const users = parseContent(data.content).map(transcript => transcript.user);
-        setActiveUsers([...new Set(users)]); // 重複を排除してユーザーを設定
+        setActiveUsers([...new Set(users)].sort()); // 重複を排除し、アルファベット順にソート
       })
       .catch(error => console.error('Error fetching post:', error));
   }, [postId]);
 
-  useEffect(() => {
-    fetch(`http://192.168.0.2:3000/votes/${postId}`)
+  const fetchVotes = () => {
+    fetch(`http://192.168.0.7:3000/votes/${postId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -46,6 +46,10 @@ const PostDetailScreen = ({ route }) => {
       })
       .then(data => setVotes(data))
       .catch(error => console.error('Error fetching votes:', error));
+  };
+
+  useEffect(() => {
+    fetchVotes();
   }, [postId]);
 
   const handleScroll = ({ nativeEvent }) => {
@@ -71,7 +75,7 @@ const PostDetailScreen = ({ route }) => {
     Alert.alert('Selected User', `You selected: ${user}`);
   
     // 投票を保存する
-    fetch('http://192.168.0.2:3000/votes', {
+    fetch('http://192.168.0.7:3000/votes', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,14 +90,19 @@ const PostDetailScreen = ({ route }) => {
     })
     .then(data => {
       console.log('Vote saved:', data);
+      fetchVotes(); // 投票後に最新の投票結果を取得して更新
     })
     .catch(error => {
       console.error('Error saving vote:', error);
     });
   };  
-  
+
   const showVoteResults = () => {
     setVoteModalVisible(true);
+  };
+
+  const closeVoteModal = () => {
+    setVoteModalVisible(false);
   };
 
   if (!post) {
@@ -171,24 +180,28 @@ const PostDetailScreen = ({ route }) => {
         animationType="slide"
         transparent={true}
         visible={voteModalVisible}
-        onRequestClose={() => setVoteModalVisible(false)}
+        onRequestClose={closeVoteModal}
       >
-        <View style={modalStyles.modalContainer}>
-          <View style={modalStyles.modalView}>
-            <Text style={modalStyles.modalTitle}>投票結果</Text>
-            <HorizontalBarChart
-              data={voteData}
-              width={350}
-              height={220}
-            />
-            <TouchableOpacity
-              style={modalStyles.closeButton}
-              onPress={() => setVoteModalVisible(false)}
-            >
-              <Text style={modalStyles.buttonText}>Close</Text>
-            </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={closeVoteModal}>
+          <View style={fullScreenModalStyles.modalContainer}>
+            <TouchableWithoutFeedback>
+              <View style={fullScreenModalStyles.modalView}>
+                <Text style={fullScreenModalStyles.modalTitle}>投票結果</Text>
+                <HorizontalBarChart
+                  data={voteData}
+                  width={350}
+                  height={300}
+                />
+                <TouchableOpacity
+                  style={fullScreenModalStyles.closeButton}
+                  onPress={closeVoteModal}
+                >
+                  <Text style={fullScreenModalStyles.buttonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -202,7 +215,7 @@ const modalStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalView: {
-    width: '90%', // モーダルの幅を少し広げる
+    width: '80%',
     backgroundColor: '#f1f2f6', // モーダルの背景色を明るく
     borderRadius: 20,
     padding: 30,
@@ -246,6 +259,50 @@ const modalStyles = StyleSheet.create({
   },
   buttonText: {
     color: '#2f3542', // ボタンの文字色をダークに
+    fontSize: 18,
+  },
+});
+
+const fullScreenModalStyles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // 黒系の背景色を透過
+  },
+  modalView: {
+    width: '90%', // モーダルの幅を少し広げる
+    height: '80%', // モーダルの高さを調整
+    backgroundColor: '#f1f2f6',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#2f3542',
+    textAlign: 'center',
+  },
+  closeButton: {
+    backgroundColor: '#ff4757',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 15,
+    width: '80%',
+  },
+  buttonText: {
+    color: '#fff', // ボタンの文字色を白に
     fontSize: 18,
   },
 });
