@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import DeviceInfo from 'react-native-device-info'; // 追加
 import { styles } from '../styles/styles';
 
 const userColors = {
@@ -17,12 +18,15 @@ const PostPreparationScreen = ({ route, navigation }) => {
     const content = transcripts.map((t) => `${t.user}: ${t.text}`).join('\n');
 
     try {
+      const deviceId = await DeviceInfo.getUniqueId(); // 端末IDを取得
+      console.log('Device ID:', deviceId); // 端末IDをログ出力
+
       const response = await fetch('http://192.168.0.7:3000/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, content }),
+        body: JSON.stringify({ title, content, device_id: deviceId }), // device_idを含める
       });
       if (response.ok) {
         console.log('投稿が完了しました');

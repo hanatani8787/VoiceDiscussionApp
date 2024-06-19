@@ -25,10 +25,12 @@ app.post('/discussions', (req, res) => {
 });
 
 app.post('/posts', (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, device_id } = req.body;
 
-  const stmt = db.prepare("INSERT INTO posts (title, content) VALUES (?, ?)");
-  stmt.run(title, content, function(err) {
+  console.log('Received post data:', { title, content, device_id }); // 受信データをログ出力
+
+  const stmt = db.prepare("INSERT INTO posts (title, content, device_id) VALUES (?, ?, ?)");
+  stmt.run(title, content, device_id, function(err) {
     if (err) {
       console.error('Error inserting post:', err.message);
       res.status(500).send({ error: err.message });
@@ -64,6 +66,18 @@ app.get('/posts/:id', (req, res) => {
       return;
     }
     res.status(200).json(row);
+  });
+});
+
+app.get('/posts/device/:device_id', (req, res) => {
+  const { device_id } = req.params;
+  db.all("SELECT * FROM posts WHERE device_id = ?", [device_id], (err, rows) => {
+    if (err) {
+      console.error('Error fetching posts for device:', err.message);
+      res.status(500).send({ error: err.message });
+      return;
+    }
+    res.status(200).json(rows);
   });
 });
 
