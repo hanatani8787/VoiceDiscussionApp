@@ -17,6 +17,7 @@ const PostDetailScreen = ({ route }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [votes, setVotes] = useState([]);
   const [voteModalVisible, setVoteModalVisible] = useState(false);
+  const [modalShown, setModalShown] = useState(false); // モーダルが表示されたかどうかを追跡するフラグ
   const scrollViewRef = useRef(null);
   const [activeUsers, setActiveUsers] = useState([]);
 
@@ -54,8 +55,9 @@ const PostDetailScreen = ({ route }) => {
 
   const handleScroll = ({ nativeEvent }) => {
     const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 20) {
+    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 20 && !modalShown) {
       setModalVisible(true);
+      setModalShown(true); // モーダルが表示されたことを記録
     }
   };
 
