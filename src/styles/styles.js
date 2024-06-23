@@ -123,4 +123,9 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     color: '#f1f2f6',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
 });

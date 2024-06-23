@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const db = require('./db'); // db.jsをインポート
+const db = require('./db');
 
 const app = express();
 const port = 3000;
@@ -26,8 +26,6 @@ app.post('/discussions', (req, res) => {
 
 app.post('/posts', (req, res) => {
   const { title, content, device_id } = req.body;
-
-  console.log('Received post data:', { title, content, device_id }); // 受信データをログ出力
 
   const stmt = db.prepare("INSERT INTO posts (title, content, device_id) VALUES (?, ?, ?)");
   stmt.run(title, content, device_id, function(err) {
@@ -73,7 +71,28 @@ app.get('/posts/device/:device_id', (req, res) => {
   const { device_id } = req.params;
   db.all("SELECT * FROM posts WHERE device_id = ?", [device_id], (err, rows) => {
     if (err) {
-      console.error('Error fetching posts for device:', err.message);
+      console.error('Error fetching posts by device_id:', err.message);
+      res.status(500).send({ error: err.message });
+      return;
+    }
+    res.status(200).json(rows);
+  });
+});
+
+app.get('/posts/device/:device_id/status/:status', (req, res) => {
+  const { device_id, status } = req.params;
+  let query;
+  if (status === 'OPEN') {
+    query = "SELECT * FROM posts WHERE device_id = ? AND created_at >= datetime('now', '-3 days')";
+  } else if (status === 'CLOSE') {
+    query = "SELECT * FROM posts WHERE device_id = ? AND created_at < datetime('now', '-3 days')";
+  } else {
+    query = "SELECT * FROM posts WHERE device_id = ?";
+  }
+
+  db.all(query, [device_id], (err, rows) => {
+    if (err) {
+      console.error('Error fetching posts by status:', err.message);
       res.status(500).send({ error: err.message });
       return;
     }

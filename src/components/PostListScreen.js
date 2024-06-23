@@ -6,6 +6,10 @@ const PostListScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = () => {
     fetch('http://192.168.0.7:3000/posts')
       .then(response => {
         if (!response.ok) {
@@ -15,7 +19,7 @@ const PostListScreen = ({ navigation }) => {
       })
       .then(data => setPosts(data))
       .catch(error => console.error('Error fetching posts:', error));
-  }, []);
+  };
 
   return (
     <View style={styles.container}>
