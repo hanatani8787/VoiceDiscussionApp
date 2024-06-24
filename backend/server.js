@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const db = require('./db');
+const db = require('./db'); // db.jsをインポート
 
 const app = express();
 const port = 3000;
@@ -27,7 +27,7 @@ app.post('/discussions', (req, res) => {
 app.post('/posts', (req, res) => {
   const { title, content, device_id } = req.body;
 
-  const stmt = db.prepare("INSERT INTO posts (title, content, device_id) VALUES (?, ?, ?)");
+  const stmt = db.prepare("INSERT INTO posts (title, content, device_id, created_at) VALUES (?, ?, ?, datetime('now'))");
   stmt.run(title, content, device_id, function(err) {
     if (err) {
       console.error('Error inserting post:', err.message);
@@ -71,7 +71,7 @@ app.get('/posts/device/:device_id', (req, res) => {
   const { device_id } = req.params;
   db.all("SELECT * FROM posts WHERE device_id = ?", [device_id], (err, rows) => {
     if (err) {
-      console.error('Error fetching posts by device_id:', err.message);
+      console.error('Error fetching posts:', err.message);
       res.status(500).send({ error: err.message });
       return;
     }
@@ -79,15 +79,14 @@ app.get('/posts/device/:device_id', (req, res) => {
   });
 });
 
-app.get('/posts/device/:device_id/status/:status', (req, res) => {
-  const { device_id, status } = req.params;
-  let query;
+app.get('/posts/status/:status/:device_id', (req, res) => {
+  const { status, device_id } = req.params;
+  const now = new Date();
+  let query = "SELECT * FROM posts WHERE device_id = ?";
   if (status === 'OPEN') {
-    query = "SELECT * FROM posts WHERE device_id = ? AND created_at >= datetime('now', '-3 days')";
+    query += " AND datetime(created_at) > datetime('now', '-3 days')";
   } else if (status === 'CLOSE') {
-    query = "SELECT * FROM posts WHERE device_id = ? AND created_at < datetime('now', '-3 days')";
-  } else {
-    query = "SELECT * FROM posts WHERE device_id = ?";
+    query += " AND datetime(created_at) <= datetime('now', '-3 days')";
   }
 
   db.all(query, [device_id], (err, rows) => {
