@@ -77,6 +77,7 @@ const customStyles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: '#f1f2f6',
     borderRadius: 5,
+    flexWrap: 'nowrap', // ここで改行を防止
   },
   postTitle: {
     flex: 2,
@@ -87,7 +88,8 @@ const customStyles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     color: '#2f3542',
-    textAlign: 'center',
+    textAlign: 'right', // Adjust to align the date to the right
+    whiteSpace: 'nowrap', // これを追加
   },
   expiredDate: {
     color: 'red',
