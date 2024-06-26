@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { styles } from '../styles/styles';
 import HorizontalBarChart from '../components/HorizontalBarChart';
+import config from '../../config'; // config.js をインポート
 
 const userColors = {
   'ユーザーA': styles.userA,
@@ -18,7 +19,7 @@ const HistoryPostDetailScreen = ({ route }) => {
   const [votes, setVotes] = useState([]);
 
   useEffect(() => {
-    fetch(`http://192.168.0.7:3000/posts/${postId}`)
+    fetch(`${config.apiBaseUrl}/posts/${postId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -30,7 +31,7 @@ const HistoryPostDetailScreen = ({ route }) => {
   }, [postId]);
 
   useEffect(() => {
-    fetch(`http://192.168.0.7:3000/votes/${postId}`)
+    fetch(`${config.apiBaseUrl}/votes/${postId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

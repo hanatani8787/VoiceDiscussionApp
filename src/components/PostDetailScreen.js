@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal, Alert, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { styles } from '../styles/styles';
 import HorizontalBarChart from '../components/HorizontalBarChart';
+import config from '../../config'; // config.js をインポート
 
 const userColors = {
   'ユーザーA': styles.userA,
@@ -22,7 +23,7 @@ const PostDetailScreen = ({ route }) => {
   const [activeUsers, setActiveUsers] = useState([]);
 
   useEffect(() => {
-    fetch(`http://192.168.0.7:3000/posts/${postId}`)
+    fetch(`${config.apiBaseUrl}/posts/${postId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -38,7 +39,7 @@ const PostDetailScreen = ({ route }) => {
   }, [postId]);
 
   const fetchVotes = () => {
-    fetch(`http://192.168.0.7:3000/votes/${postId}`)
+    fetch(`${config.apiBaseUrl}/votes/${postId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -77,7 +78,7 @@ const PostDetailScreen = ({ route }) => {
     Alert.alert('Selected User', `You selected: ${user}`);
   
     // 投票を保存する
-    fetch('http://192.168.0.7:3000/votes', {
+    fetch(`${config.apiBaseUrl}/votes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

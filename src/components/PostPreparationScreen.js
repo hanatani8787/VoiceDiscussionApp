@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import DeviceInfo from 'react-native-device-info'; // 追加
 import { styles } from '../styles/styles';
+import config from '../../config'; // config.js をインポート
 
 const userColors = {
   'ユーザーA': styles.userA,
@@ -21,7 +22,7 @@ const PostPreparationScreen = ({ route, navigation }) => {
       const deviceId = await DeviceInfo.getUniqueId(); // 端末IDを取得
       console.log('Device ID:', deviceId); // 端末IDをログ出力
 
-      const response = await fetch('http://192.168.0.7:3000/posts', {
+      const response = await fetch(`${config.apiBaseUrl}/posts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

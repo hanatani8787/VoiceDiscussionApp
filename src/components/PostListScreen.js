@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { styles } from '../styles/styles';
+import config from '../../config'; // config.js をインポート
 
 const PostListScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fetch('http://192.168.0.7:3000/posts')
+    fetch(`${config.apiBaseUrl}/posts`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

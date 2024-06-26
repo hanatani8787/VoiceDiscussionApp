@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { styles } from '../styles/styles';
 import { DeviceContext } from '../../App';
+import config from '../../config'; // config.js をインポート
 
 const HistoryScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
@@ -14,8 +15,8 @@ const HistoryScreen = ({ navigation }) => {
 
   const fetchPosts = () => {
     const url = filter === 'ALL' 
-      ? `http://192.168.0.7:3000/posts/device/${deviceId}`
-      : `http://192.168.0.7:3000/posts/status/${filter}/${deviceId}`;
+      ? `${config.apiBaseUrl}/posts/device/${deviceId}`
+      : `${config.apiBaseUrl}/posts/status/${filter}/${deviceId}`;
     
     fetch(url)
       .then(response => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import config from '../../config'; // config.js をインポート
 
 const HomeScreen = ({ navigation }) => {
   return (
